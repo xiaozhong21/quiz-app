@@ -9,7 +9,7 @@ export default function Question({handleSubmit, questionChosen, displayQuestion,
           <span className="question-number">{`Question ${questionChosen.id}. `}</span>
           {questionChosen.title}
         </p><br/>
-        <input type="radio" id="choice1" name="choices" value={questionChosen.choices[0]} />
+        <input className="placeholder" type="radio" id="choice1" name="choices" value={questionChosen.choices[0]} />
         <label htmlFor="choice1">{questionChosen.choices[0]}</label><br/><br/>
         <input type="radio" id="choice2" name="choices" value={questionChosen.choices[1]} />
         <label htmlFor="choice2">{questionChosen.choices[1]}</label><br/><br/>
