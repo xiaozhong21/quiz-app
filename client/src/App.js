@@ -14,6 +14,7 @@ function App() {
   const [score, setScore] = useState(0);
   const [disable, setDisable] = useState(false);
   const [flagIndex, setFlagIndex] = useState(1);
+  const [userAnswer, setUserAnswer] = useState(null);
 
   const message = [
     `Sorry, your answer is incorrect.`,
@@ -27,7 +28,6 @@ function App() {
   const generateQuestion = () => {
     continueGame();
     setDisable(false);
-    resetCheckedAnswers();
     setSubmitted(false);
     setResultMessage(false);
     fetchQuestion();
@@ -53,15 +53,6 @@ function App() {
     }
   }
 
-  const resetCheckedAnswers = () => {
-    if (document.getElementById('choice1')) {
-      document.getElementById('choice1').checked = false;
-      document.getElementById('choice2').checked = false;
-      document.getElementById('choice3').checked = false;
-      document.getElementById('choice4').checked = false;
-    }
-  };
-
   const fetchQuestion = async () => {
     let response = await fetch('/api');
     await response.json().then(questions => setQuestionChosen(() => {
@@ -69,8 +60,8 @@ function App() {
     }));
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = (formSubmitEvent) => {
+    formSubmitEvent.preventDefault();
     setSubmitted(true);
     checkAnswer();
     setDisable(true);
@@ -80,17 +71,7 @@ function App() {
   }
 
   const checkAnswer = () => {
-    let answerValue;
-    if (document.getElementById('choice1').checked) {
-      answerValue = document.getElementById('choice1').value;
-    } else if (document.getElementById('choice2').checked) {
-      answerValue = document.getElementById('choice2').value;
-    } else if (document.getElementById('choice3').checked) {
-      answerValue = document.getElementById('choice3').value;
-    } else if (document.getElementById('choice4').checked) {
-      answerValue = document.getElementById('choice4').value;
-    }
-    if (answerValue === questionChosen.correct) {
+    if (userAnswer === questionChosen.correct) {
       setFlagIndex(previousIndex => previousIndex + 1);
       document.getElementById(`flag${flagIndex}`).style.visibility = "visible";
       setScore(previousScore => previousScore + 1);
@@ -110,12 +91,26 @@ function App() {
     }
   }
 
+  const handleAnswerChange = (radioButtonEvent) => {
+    setUserAnswer(() => {
+      return radioButtonEvent.target.value;
+    })
+  }
+
   return (
     <div className="App">
       <Score score={score}/>
       <button id="button" className="button" onClick={generateQuestion}>Start Quiz</button><br/>
       <p className="description">Answer all ten questions correctly to complete the puzzle below!</p>
-      {questionChosen && <Question displayQuestion={displayQuestion} questionChosen={questionChosen} handleSubmit={handleSubmit} disabled={disable}/>}<br/>
+      {questionChosen && 
+      <Question 
+        displayQuestion={displayQuestion} 
+        questionChosen={questionChosen} 
+        handleSubmit={handleSubmit} 
+        disabled={disable}
+        userAnswer={userAnswer}
+        handleAnswerChange={handleAnswerChange}
+      />}<br/>
       <p className="result-message">{submitted && resultMessage}</p><br/><br/>
       <Flag />
     </div>

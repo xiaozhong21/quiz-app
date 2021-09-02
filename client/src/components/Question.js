@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Question({handleSubmit, questionChosen, displayQuestion, disabled}) {
+export default function Question({handleSubmit, questionChosen, displayQuestion, disabled, userAnswer, handleAnswerChange}) {
   return (
     <div>
       {displayQuestion && 
@@ -9,17 +9,27 @@ export default function Question({handleSubmit, questionChosen, displayQuestion,
           <span className="question-number">{`Question ${questionChosen.id}. `}</span>
           {questionChosen.title}
         </p><br/>
-        <input className="placeholder" type="radio" id="choice1" name="choices" value={questionChosen.choices[0]} />
-        <label htmlFor="choice1">{questionChosen.choices[0]}</label><br/><br/>
-        <input type="radio" id="choice2" name="choices" value={questionChosen.choices[1]} />
-        <label htmlFor="choice2">{questionChosen.choices[1]}</label><br/><br/>
-        <input type="radio" id="choice3" name="choices" value={questionChosen.choices[2]} />
-        <label htmlFor="choice3">{questionChosen.choices[2]}</label><br/><br/>
-        <input type="radio" id="choice4" name="choices" value={questionChosen.choices[3]} />
-        <label htmlFor="choice4">{questionChosen.choices[3]}</label><br/><br/>
+        {questionChosen.choices.map((choice, index) => {
+          return (
+            <div key={index}>
+              <label>
+                <input                               
+                  type="radio" 
+                  id={`choice${questionChosen.id}`}
+                  name="choices" 
+                  value={choice}
+                  checked={userAnswer === choice}
+                  onChange={handleAnswerChange}
+                />
+                {choice}
+              </label>
+              <br/><br/>
+            </div>
+          )})
+        }
         <input type="submit" value="Submit" className="button" disabled={disabled}/>
-      </form>}
-      
+      </form>
+      }
     </div>
   )
 }
